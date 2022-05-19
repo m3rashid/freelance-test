@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
-const ColorModeContext = createContext();
+const ColorModeContext = createContext("light");
 
 export default ColorModeContext;

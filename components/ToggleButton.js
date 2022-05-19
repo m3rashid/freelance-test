@@ -10,21 +10,27 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 
 const ToggleButton = () => {
   const theme = useTheme();
-  const { darkMode, setDarkMode } = useContext(ColorModeContext);
+  const { colorTheme, setColorTheme } = useContext(ColorModeContext);
+
+  const handleThemeChange = () => {
+    if (colorTheme === "light") {
+      localStorage.setItem("theme", "dark");
+      setColorTheme("dark");
+    } else {
+      localStorage.setItem("theme", "light");
+      setColorTheme("light");
+    }
+  };
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "end"
-      }}
-    >
+    <Box sx={{ display: "flex", justifyContent: "end" }}>
       <Tooltip
         title={`${
           theme.palette.mode.charAt(0).toUpperCase() +
           theme.palette.mode.slice(1)
         } mode`}
       >
-        <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
+        <IconButton onClick={handleThemeChange} color="inherit">
           {theme.palette.mode === "dark" ? (
             <Brightness7Icon />
           ) : (

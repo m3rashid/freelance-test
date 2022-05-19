@@ -18,25 +18,20 @@ const clientSideEmotionCache = createEmotionCache();
 export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const mode = localStorage.getItem("mode");
-    // set mode
-    setDarkMode(mode);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("mode", darkMode);
-  }, [darkMode]);
+  const [colorTheme, setColorTheme] = useState("light");
 
   // Set dark mode based on media query
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   useEffect(() => {
-    setDarkMode(prefersDarkMode);
+    if (window) {
+      const preferredTheme = window.localStorage.getItem("theme");
+      if (preferredTheme === "dark" || preferredTheme === "light") {
+        setColorTheme(preferredTheme);
+      } else {
+        setColorTheme(prefersDarkMode ? "dark" : "light");
+      }
+    }
   }, [prefersDarkMode]);
-
-  console.log(darkMode);
 
   return (
     <CacheProvider value={emotionCache}>
@@ -45,8 +40,8 @@ export default function MyApp(props) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       {/* <ColorModeContext.Provider value={colorMode}> */}
-      <ColorModeContext.Provider value={{ darkMode, setDarkMode }}>
-        <ThemeProvider theme={darkMode ? darkTheme : theme}>
+      <ColorModeContext.Provider value={{ colorTheme, setColorTheme }}>
+        <ThemeProvider theme={colorTheme === "dark" ? darkTheme : theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
           <Component {...pageProps} />
@@ -59,5 +54,5 @@ export default function MyApp(props) {
 MyApp.propTypes = {
   Component: PropTypes.elementType.isRequired,
   emotionCache: PropTypes.object,
-  pageProps: PropTypes.object.isRequired
+  pageProps: PropTypes.object.isRequired,
 };
